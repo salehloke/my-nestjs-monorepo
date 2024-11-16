@@ -1,0 +1,38 @@
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - nest-microservices
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth_service
+    depends_on:
+      - mongo
+    ports:
+      - '3001:3001'
+    networks:
+      - nest-microservices
+    env_file:
+      - .env
+
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: user_service
+    depends_on:
+      - mongo
+    ports:
+      - '3002:3002'
+    networks:
+      - nest-microservices
+    env_file:
+      - .env
